@@ -4,7 +4,6 @@ import 'package:pc_craft/controller/pass_visibility_controller.dart';
 import 'package:pc_craft/view/screens/Auth/register_screen.dart';
 import 'package:pc_craft/view/screens/Auth/widgets/google_button.dart';
 import 'package:pc_craft/view/screens/Auth/widgets/gradient_button.dart';
-import 'package:pc_craft/view/screens/Auth/widgets/register_header.dart';
 import 'package:pc_craft/view/screens/Auth/widgets/textfield.dart';
 import 'package:provider/provider.dart';
 
@@ -22,67 +21,92 @@ class LoginScreen extends StatelessWidget {
       body: SafeArea(
         child: ChangeNotifierProvider(
           create: (_) => PasswordVisibilityController(),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Header(),
-                    IconButton(
-                      icon: Icon(
-                        theme.isDark ? Icons.light_mode : Icons.dark_mode,
-                        color: theme.isDark ? Colors.white : Colors.black,
-                      ),
-                      onPressed: () => theme.toggleTheme(),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 30),
 
-                // Taller Card
-                Card(
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                /// Theme toggle
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: Icon(
+                      theme.isDark ? Icons.light_mode : Icons.dark_mode,
+                      color: theme.isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () => theme.toggleTheme(),
                   ),
-                  color: theme.isDark ? Colors.grey[850] : Colors.white,
-                  shadowColor: const Color.fromARGB(
-                    40,
-                    0,
-                    0,
-                    0,
-                  ).withOpacity(0.25),
-                  child: Container(
-                    // Set a minimum height
-                    constraints: const BoxConstraints(minHeight: 250),
+                ),
+
+                const SizedBox(height: 40),
+
+                /// Welcome Text
+                Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        "Welcome Back",
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: theme.isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        "Login to continue",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: theme.isDark
+                              ? Colors.grey[400]
+                              : Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 60),
+
+                /// Login Card
+                Card(
+                  elevation: 2, // reduced shadow
+                  shadowColor: Colors.black12,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  color: theme.isDark ? Colors.grey[900] : Colors.white,
+                  child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 25,
-                      vertical: 40,
+                      horizontal: 22,
+                      vertical: 30,
                     ),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         FormFields(
                           controller: usernameController,
                           hint: "Username",
                         ),
-                        const SizedBox(height: 25), // more space between fields
+
+                        const SizedBox(height: 20),
+
                         FormFields(
                           controller: passwordController,
                           hint: "Password",
                           isPassword: true,
                         ),
+
                         const SizedBox(height: 10),
+
                         Align(
                           alignment: Alignment.centerRight,
                           child: Text(
                             "Forgot Password?",
                             style: TextStyle(
-                              color: Colors.red,
+                              color: theme.isDark
+                                  ? Colors.redAccent
+                                  : Colors.red,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -92,9 +116,10 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 25),
 
-                // Gradient Login Button
+                const SizedBox(height: 30),
+
+                /// Login Button
                 GradientButton(
                   text: "Login",
                   onPressed: () {},
@@ -102,13 +127,15 @@ class LoginScreen extends StatelessWidget {
                     colors: [Colors.cyanAccent.shade400, Colors.blueAccent],
                   ),
                 ),
+
                 const SizedBox(height: 15),
 
-                // Google Button
+                /// Google Login
                 const GoogleButton(),
-                const SizedBox(height: 35),
 
-                // Footer
+                const Spacer(),
+
+                /// Register Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -136,7 +163,8 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+
+                const SizedBox(height: 25),
               ],
             ),
           ),
