@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pc_craft/controller/theme_controller.dart';
 import 'package:pc_craft/controller/pass_visibility_controller.dart';
+import 'package:pc_craft/services/api_service.dart';
 import 'package:pc_craft/view/screens/Auth/register_screen.dart';
+import 'package:pc_craft/view/screens/home_screen.dart';
 import 'package:pc_craft/view/screens/Auth/widgets/google_button.dart';
 import 'package:pc_craft/view/screens/Auth/widgets/gradient_button.dart';
 import 'package:pc_craft/view/screens/Auth/widgets/textfield.dart';
@@ -122,7 +124,62 @@ class LoginScreen extends StatelessWidget {
                 /// Login Button
                 GradientButton(
                   text: "Login",
-                  onPressed: () {},
+                  onPressed: () async {
+                    // Validate that fields are not empty
+                    if (usernameController.text.trim().isEmpty ||
+                        passwordController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please fill in all fields"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    // Show loading indicator
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) =>
+                          const Center(child: CircularProgressIndicator()),
+                    );
+
+                    final authService = AuthService();
+                    final result = await authService.login(
+                      username: usernameController.text.trim(),
+                      password: passwordController.text.trim(),
+                    );
+
+                    // Close loading dialog
+                    Navigator.of(context).pop();
+
+                    if (result['success'] == true) {
+                      // Show success message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(result['message']),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+
+                      // Navigate to home screen after successful login
+                      Future.delayed(const Duration(seconds: 1), () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomeScreen()),
+                        );
+                      });
+                    } else {
+                      // Show error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(result['message']),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
                   gradient: LinearGradient(
                     colors: [Colors.cyanAccent.shade400, Colors.blueAccent],
                   ),
