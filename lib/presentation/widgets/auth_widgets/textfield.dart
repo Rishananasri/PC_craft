@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pc_craft/controller/pass_visibility_controller.dart';
-import 'package:pc_craft/controller/theme_controller.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pc_craft/presentation/providers/providers.dart';
 
-class FormFields extends StatelessWidget {
+class FormFields extends ConsumerWidget {
   final TextEditingController controller;
   final String hint;
   final bool isPassword;
@@ -24,14 +23,15 @@ class FormFields extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final theme = context.watch<ThemeController>();
-    final visibilityController = context.watch<PasswordVisibilityController>();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    final isDark = themeMode == ThemeMode.dark;
+    final visibilityState = ref.watch(passwordVisibilityProvider);
 
     final bool obscureText = isPassword
-        ? !visibilityController.passwordVisible
+        ? !visibilityState.passwordVisible
         : isConfirmPassword
-        ? !visibilityController.confirmPasswordVisible
+        ? !visibilityState.confirmPasswordVisible
         : false;
 
     return TextFormField(
@@ -44,7 +44,7 @@ class FormFields extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: theme.isDark
+        fillColor: isDark
             ? Colors.grey[800]
             : const Color.fromARGB(255, 236, 235, 235),
         border: OutlineInputBorder(
@@ -63,12 +63,12 @@ class FormFields extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (isPassword) {
-                    context
-                        .read<PasswordVisibilityController>()
+                    ref
+                        .read(passwordVisibilityProvider.notifier)
                         .togglePassword();
                   } else {
-                    context
-                        .read<PasswordVisibilityController>()
+                    ref
+                        .read(passwordVisibilityProvider.notifier)
                         .toggleConfirmPassword();
                   }
                 },
